@@ -1,0 +1,1 @@
+trajectory, controller 등 함수 헤더파일 쪼갬

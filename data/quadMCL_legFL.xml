@@ -1,0 +1,49 @@
+<mujoco model="quadMCL_legFL">
+	<compiler angle="radian" meshdir="urdf_legFL/meshes/" />
+	<option timestep="0.0001" integrator="RK4" gravity = "0 0 -9.81" cone="elliptic" impratio="100" >
+		<flag sensornoise="enable" energy="enable" contact="enable" />
+	</option>
+	<asset>
+		<material name="dark" specular="0" shininess="0.25" rgba="0.2 0.2 0.2 1" />
+		<mesh name="torso_FL" file="hip_link.STL" />
+		<mesh name="thigh_FL" file="thigh_link.STL" />
+		<mesh name="shank_FL" file="shank_link.STL" />
+	</asset>
+	<worldbody>
+		<light diffuse=".5 .5 .5" pos="0 0 3" dir="0 0 -1"/>
+		<body name="hipTorso_FL" pos="0 0 0.5" euler="-1.5708 0 0">
+			<inertial pos="0.10195 0.026085 0.00046109" euler="0 0 0" mass="1.047" diaginertia="0.00068326 0.00082943 0.00087739"/>
+			<geom type="mesh" contype="1" conaffinity="0" group="1" material="dark" mesh="torso_FL" />
+			<joint name="torsox" type="slide" pos="0 0 0" axis="1 0 0" />
+			<joint name="torsoz" type="slide" pos="0 0 0" axis="0 -1 0" />
+			<site type="box" name="imu" pos="0.10195 0.026085 0.0004610" size="0.1 0.08 0.05" rgba="1 1 1 0.0" />
+			<body name="thigh_FL" pos="0 0 0" euler="0 0 0">
+				<inertial pos="0.00966 0 0.108119" euler="0 0 0" mass="0.50316" diaginertia="839220.12E-10 11869737.27E-10 12268062.32E-10" />
+				<geom type="mesh" contype="1" conaffinity="0" group="1" material="dark" mesh="thigh_FL" />
+				<joint name="HFE_FL" type="hinge" pos="0.1435 0 0.07105" axis="0 0 -1"/>
+				<body name="shank_FL" pos="0 0 0">
+					<inertial pos="-0.24034 0 0.108119" euler="0 0 0" mass="0.28735" diaginertia="413501.87E-10 7681064.07E-10 7682017.13E-10" />
+					<geom type="mesh" contype="1" conaffinity="0" group="2" material="dark" mesh="shank_FL" />
+					<joint name="KFE_FL" type="hinge" pos="-0.1065 0 0.07105" axis="0 0 -1"/>
+					<site type="sphere" name="foot" pos="-0.348 0.02 0.105" size="0.022" rgba="1 1 1 0.2" />
+				</body>
+			</body>
+		</body>
+	</worldbody>
+	<actuator>
+		<motor joint="HFE_FL" name="torque_HFE" gear="1" ctrllimited="true" ctrlrange="-1E4 1E4" />
+		<motor joint="KFE_FL" name="torque_KFE" gear="1" ctrllimited="true" ctrlrange="-1E4 1E4" />
+	</actuator>
+	<sensor>
+		<accelerometer site="imu" name="imu_accel" noise="0.0" />
+		<gyro site="imu" name="imu_gyro" noise="0.0" />
+		<jointpos joint="HFE_FL" name="ENC_HFE" noise="0.0" />
+		<jointpos joint="KFE_FL" name="ENC_KFE" noise="0.0" />
+		<touch name="touch_sensor" site="foot" />
+		<force name="grf_sensor" site="foot" />
+		<framelinvel name="foot_vel" objtype="site" objname="foot" />
+	</sensor>
+	<keyframe>
+		<key name="home" qpos="0.3536 0 0.546812 2.59478" />
+	</keyframe>
+</mujoco>
